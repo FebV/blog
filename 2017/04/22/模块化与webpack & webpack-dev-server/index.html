@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/blog/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端,JavaScipt," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="模块化如其官网所说，Webpack用于打包含有依赖关系的模块。在了解一个工具前，我们应该知道为什么使用它。">
+<meta name="keywords" content="前端,JavaScipt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模块化与webpack & webpack-dev-server">
+<meta property="og:url" content="https://febv.github.io/blog/2017/04/22/模块化与webpack & webpack-dev-server/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="模块化如其官网所说，Webpack用于打包含有依赖关系的模块。在了解一个工具前，我们应该知道为什么使用它。">
+<meta property="og:image" content="https://febv.github.io/blog/2017/04/22/模块化与webpack%20&%20webpack-dev-server/what-is-webpack.png">
+<meta property="og:image" content="https://febv.github.io/blog/2017/04/22/模块化与webpack%20&%20webpack-dev-server/dependence.png">
+<meta property="og:updated_time" content="2017-04-24T07:57:40.602Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="模块化与webpack & webpack-dev-server">
+<meta name="twitter:description" content="模块化如其官网所说，Webpack用于打包含有依赖关系的模块。在了解一个工具前，我们应该知道为什么使用它。">
+<meta name="twitter:image" content="https://febv.github.io/blog/2017/04/22/模块化与webpack%20&%20webpack-dev-server/what-is-webpack.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://febv.github.io/blog/2017/04/22/模块化与webpack & webpack-dev-server/"/>
+
+
+
+
+
+  <title>模块化与webpack & webpack-dev-server | Hexo</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/blog/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://febv.github.io/blog/blog/2017/04/22/模块化与webpack & webpack-dev-server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="FebV">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                模块化与webpack & webpack-dev-server
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-22T09:24:44+08:00">
+                2017-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/blog/2017/04/22/模块化与webpack & webpack-dev-server/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/04/22/模块化与webpack & webpack-dev-server/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <img src="/blog/2017/04/22/模块化与webpack%20&%20webpack-dev-server/what-is-webpack.png" alt="what-is-webpack.png" title="">
+<h1 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h1><p>如其官网所说，Webpack用于打包含有依赖关系的模块。<br>在了解一个工具前，我们应该知道为什么使用它。<br><a id="more"></a></p>
+<h2 id="Tradition"><a href="#Tradition" class="headerlink" title="Tradition"></a>Tradition</h2><p>在一开始，前端项目的规模并不大，所以靠script标签来引入JavaScript代码。<br><figure class="highlight html"><figcaption><span>index.html</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure><br>在代码需要依赖外部类库时，就需要让类库的代码先被加载执行。<br><figure class="highlight html"><figcaption><span>index.html</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://static.xxx.com/js/jQuery.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure><br>当自己的代码发展到几万行时，使用一个文件就会变得捉襟见肘，既不方便协同开发，也不利于使用缓存策略，所以自然要分拆成多个脚本文件。<br><figure class="highlight html"><figcaption><span>index.html</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://static.xxx.com/js/jQuery.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script1.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script4.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script6.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script2.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script7.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script5.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script8.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"script3.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure><br>这样会带来一些问题<br>首先，尽管浏览器会确保各个脚本按顺序执行，但却无法判断其依赖关系。<br><img src="/blog/2017/04/22/模块化与webpack%20&%20webpack-dev-server/dependence.png" alt="dependence.png" title=""><br>当各个脚本间有着非常复杂的依赖关系时，组织它们的加载顺序就变得很有难度。<br>另外，假如script5.js仅依赖script1.js就可以执行，但script5.js同样需要等待所有在它之前引用的脚本都加载执行完成才可以执行。<br>那为什么不能直接把script5.js提到script1.js的后面呢？这会带来新的问题，如果script5.js并不是一个优先级很高的脚本，或者说在页面加载完成后很长一段时间并不会用到它，那么优先加载它就会影响其他更重要的脚本的加载，从而损害体验。<br>而且，如果脚本间存在着依赖，那么被依赖的脚本必须通过声明全局变量来导出被依赖的变量，以供其他脚本使用，这样做会污染全局变量。<br>例如，jQuery通过给window对象赋值jQuery属性来导出供其他脚本使用的对象，但其他的脚本不能够再声明名为jQuery的变量。</p>
+<h2 id="AMD-CMD"><a href="#AMD-CMD" class="headerlink" title="AMD/CMD"></a>AMD/CMD</h2><p>我们需要一种“声明依赖，动态加载”的方式来加载所有需要的脚本。AMD/CMD规范可以做到这样的效果，简单介绍AMD规范最流行的实现：require.js<br><figure class="highlight js"><figcaption><span>script1.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">define([<span class="string">'jQuery'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">jQuery</span>)</span>&#123;</div><div class="line">　　　　<span class="function"><span class="keyword">function</span> <span class="title">do</span>(<span class="params"></span>)</span>&#123;</div><div class="line">　　　　　　jQuery.doSomething();</div><div class="line">　　　　&#125;</div><div class="line">　　　　<span class="keyword">return</span> &#123;</div><div class="line">            <span class="attr">do</span>: <span class="keyword">do</span></div><div class="line">　　　　&#125;;</div><div class="line">　　&#125;);</div></pre></td></tr></table></figure><br><figure class="highlight js"><figcaption><span>script5.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>([<span class="string">'script1'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">script1</span>)</span>&#123;</div><div class="line">　　　　<span class="comment">// code rely on script1</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure><br>在上述代码中，script1.js依赖于jQuery，并声明成为了一个模块，而script5.js的执行又依赖于script1.js，因此require.js会首先加载jQuery，然后加载script1.js，最后加载script5.js，做到了“声明依赖，动态加载”的模块化。</p>
+<h2 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h2><p>同样也介绍一下服务端JavaScript的依赖管理规范CommonJs<br>在服务端，加载依赖都是通过文件I/O，不像在浏览器端需要通过网络请求，所以在加载速度和稳定性上远远超过浏览器环境，也就没有必要通过异步方式加载所依赖的模块。其写法如下：<br><figure class="highlight js"><figcaption><span>index.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> user = <span class="built_in">require</span>(<span class="string">'./user'</span>);</div><div class="line"><span class="built_in">console</span>.log(user.username);</div></pre></td></tr></table></figure><br><figure class="highlight js"><figcaption><span>user.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> user = &#123;</div><div class="line">    <span class="attr">username</span>: <span class="string">"FebV"</span>,</div><div class="line">    <span class="attr">password</span>: <span class="string">"mypass"</span>,</div><div class="line">&#125;;</div><div class="line"><span class="built_in">module</span>.exports = user;</div></pre></td></tr></table></figure></p>
+<h2 id="ES6"><a href="#ES6" class="headerlink" title="ES6"></a>ES6</h2><p>为了统一浏览器与服务端的模块化风格，ES6推出了import/export语法：<br><figure class="highlight js"><figcaption><span>index.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> user <span class="keyword">from</span> <span class="string">'./user'</span>;</div><div class="line"><span class="built_in">console</span>.log(user.username);</div></pre></td></tr></table></figure><br><figure class="highlight js"><figcaption><span>user.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> user = &#123;</div><div class="line">    <span class="attr">username</span>: <span class="string">"FebV"</span>,</div><div class="line">    <span class="attr">password</span>: <span class="string">"mypass"</span>,</div><div class="line">&#125;;</div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> user;</div></pre></td></tr></table></figure><br>统一了标准，前后端模块就可以共用同一套规范来引入依赖，有利于模块的复用。<br>很遗憾，无论是在浏览器端还是在服务端，都不能够直接使用ES6的模块化语法。<br>于是，webpack便适时登场了。</p>
+<h1 id="Webpack介绍"><a href="#Webpack介绍" class="headerlink" title="Webpack介绍"></a>Webpack介绍</h1><p>由于ES6风格与CommonJs十分相似，所以通过CommonJs的语法也能够比较顺利地引入使用ES6规范声明的模块，webpack主要用于支持浏览器端的模块化语法。</p>
+<h2 id="安装webpack"><a href="#安装webpack" class="headerlink" title="安装webpack"></a>安装webpack</h2><p>通过npm，我们可以轻松地为项目添加webpack依赖。<br><figure class="highlight plain"><figcaption><span>project/root/</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack --save-dev</div></pre></td></tr></table></figure></p>
+<h2 id="初步使用webpack"><a href="#初步使用webpack" class="headerlink" title="初步使用webpack"></a>初步使用webpack</h2><p>推荐使用独立的webpack.config.js文件作为webpack的配置文件<br><figure class="highlight plain"><figcaption><span>project/root/webpack.config.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">module.exports = &#123;</div><div class="line">    entry: &quot;./index.js&quot;</div><div class="line">    output: &#123;</div><div class="line">        filename: &quot;bundle.js&quot;,</div><div class="line">        path: &quot;__dirname&quot;,</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>上面的配置文件展示了webpack运行所必须的最简配置项，由于webpack使用Node作为运行环境，很明显其配置文件使用了CommonJs风格。<br>entry   表明项目的入口文件，即Js代码从何处开始执行。<br>output  描述了打包后的目标文件，包括其文件名及输出路径。</p>
+<h2 id="webpack原理"><a href="#webpack原理" class="headerlink" title="webpack原理"></a>webpack原理</h2><p>webpack将从入口文件开始，把所有的依赖打包成一个bundle.js，其运行效果等同于在ES6规范下期望的运行效果，以前文中ES6风格模块的代码为例，使用webpack将其打包之后的bundle.js如下：<br><figure class="highlight js"><figcaption><span>bundle.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">modules</span>) </span>&#123; <span class="comment">// webpackBootstrap</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// The module cache</span></div><div class="line"><span class="comment">/******/</span> 	<span class="keyword">var</span> installedModules = &#123;&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// The require function</span></div><div class="line"><span class="comment">/******/</span> 	<span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Check if module is in cache</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">if</span>(installedModules[moduleId]) &#123;</div><div class="line"><span class="comment">/******/</span> 			<span class="keyword">return</span> installedModules[moduleId].exports;</div><div class="line"><span class="comment">/******/</span> 		&#125;</div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Create a new module (and put it into the cache)</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">var</span> <span class="built_in">module</span> = installedModules[moduleId] = &#123;</div><div class="line"><span class="comment">/******/</span> 			i: moduleId,</div><div class="line"><span class="comment">/******/</span> 			l: <span class="literal">false</span>,</div><div class="line"><span class="comment">/******/</span> 			exports: &#123;&#125;</div><div class="line"><span class="comment">/******/</span> 		&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Execute the module function</span></div><div class="line"><span class="comment">/******/</span> 		modules[moduleId].call(<span class="built_in">module</span>.exports, <span class="built_in">module</span>, <span class="built_in">module</span>.exports, __webpack_require__);</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Flag the module as loaded</span></div><div class="line"><span class="comment">/******/</span> 		<span class="built_in">module</span>.l = <span class="literal">true</span>;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Return the exports of the module</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">return</span> <span class="built_in">module</span>.exports;</div><div class="line"><span class="comment">/******/</span> 	&#125;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// expose the modules object (__webpack_modules__)</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.m = modules;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// expose the module cache</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.c = installedModules;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// identity function for calling harmony imports with the correct context</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.i = <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123; <span class="keyword">return</span> value; &#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// define getter function for harmony exports</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.d = <span class="function"><span class="keyword">function</span>(<span class="params">exports, name, getter</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">if</span>(!__webpack_require__.o(exports, name)) &#123;</div><div class="line"><span class="comment">/******/</span> 			<span class="built_in">Object</span>.defineProperty(exports, name, &#123;</div><div class="line"><span class="comment">/******/</span> 				configurable: <span class="literal">false</span>,</div><div class="line"><span class="comment">/******/</span> 				enumerable: <span class="literal">true</span>,</div><div class="line"><span class="comment">/******/</span> 				get: getter</div><div class="line"><span class="comment">/******/</span> 			&#125;);</div><div class="line"><span class="comment">/******/</span> 		&#125;</div><div class="line"><span class="comment">/******/</span> 	&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// getDefaultExport function for compatibility with non-harmony modules</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.n = <span class="function"><span class="keyword">function</span>(<span class="params">module</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">var</span> getter = <span class="built_in">module</span> &amp;&amp; <span class="built_in">module</span>.__esModule ?</div><div class="line"><span class="comment">/******/</span> 			<span class="function"><span class="keyword">function</span> <span class="title">getDefault</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">module</span>[<span class="string">'default'</span>]; &#125; :</div><div class="line"><span class="comment">/******/</span> 			<span class="function"><span class="keyword">function</span> <span class="title">getModuleExports</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">module</span>; &#125;;</div><div class="line"><span class="comment">/******/</span> 		__webpack_require__.d(getter, <span class="string">'a'</span>, getter);</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">return</span> getter;</div><div class="line"><span class="comment">/******/</span> 	&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// Object.prototype.hasOwnProperty.call</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.o = <span class="function"><span class="keyword">function</span>(<span class="params">object, property</span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">Object</span>.prototype.hasOwnProperty.call(object, property); &#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// __webpack_public_path__</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.p = <span class="string">""</span>;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// Load entry module and return exports</span></div><div class="line"><span class="comment">/******/</span> 	<span class="keyword">return</span> __webpack_require__(__webpack_require__.s = <span class="number">1</span>);</div><div class="line"><span class="comment">/******/</span> &#125;)</div><div class="line"><span class="comment">/************************************************************************/</span></div><div class="line"><span class="comment">/******/</span> ([</div><div class="line"><span class="comment">/* 0 */</span></div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;</div><div class="line"><span class="meta"></span></div><div class="line">"use strict";</div><div class="line"><span class="keyword">var</span> user = &#123;</div><div class="line">    <span class="attr">username</span>: <span class="string">"FebV"</span>,</div><div class="line">    <span class="attr">password</span>: <span class="string">"mypass"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/* harmony default export */</span> __webpack_exports__[<span class="string">"a"</span>] = (user);</div><div class="line"></div><div class="line"><span class="comment">/***/</span> &#125;),</div><div class="line"><span class="comment">/* 1 */</span></div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;</div><div class="line"><span class="meta"></span></div><div class="line">"use strict";</div><div class="line"><span class="built_in">Object</span>.defineProperty(__webpack_exports__, <span class="string">"__esModule"</span>, &#123; <span class="attr">value</span>: <span class="literal">true</span> &#125;);</div><div class="line"><span class="comment">/* harmony import */</span> <span class="keyword">var</span> __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(<span class="number">0</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(__WEBPACK_IMPORTED_MODULE_0__user__[<span class="string">"a"</span> <span class="comment">/* default */</span>].username);</div><div class="line"></div><div class="line"><span class="comment">/***/</span> &#125;)</div><div class="line"><span class="comment">/******/</span> ]);</div></pre></td></tr></table></figure><br>可以看到，webpack打包后的bundle.js通过一个匿名的立即执行函数来加载模块，下面我们逐行分析这段代码。<br><figure class="highlight js"><figcaption><span>line 1-3</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">modules</span>) </span>&#123; <span class="comment">// webpackBootstrap</span></div><div class="line">	<span class="comment">// The module cache</span></div><div class="line">	<span class="keyword">var</span> installedModules = &#123;&#125;;</div></pre></td></tr></table></figure><br>在括号中声明的匿名函数很明显是一个需要立即执行的函数，使用这种方式可以不声明全局变量，也就不污染命名空间。jQuery就是以这样的方式执行，只在执行过程中通过<code>window.jQuery = jQuery</code>来对外暴露对象。<br><code>installedModules</code>变量则代表了已经加载的模块。加载模块需要执行模块中的代码，如果能将模块要导出的变量缓存起来，那么第二次加载此模块就可以缓存的值而无需再一次执行模块中的代码。<br><figure class="highlight js"><figcaption><span>line 5-27</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The require function</span></div><div class="line"><span class="comment">/******/</span> 	<span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Check if module is in cache</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">if</span>(installedModules[moduleId]) &#123;</div><div class="line"><span class="comment">/******/</span> 			<span class="keyword">return</span> installedModules[moduleId].exports;</div><div class="line"><span class="comment">/******/</span> 		&#125;</div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Create a new module (and put it into the cache)</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">var</span> <span class="built_in">module</span> = installedModules[moduleId] = &#123;</div><div class="line"><span class="comment">/******/</span> 			i: moduleId,</div><div class="line"><span class="comment">/******/</span> 			l: <span class="literal">false</span>,</div><div class="line"><span class="comment">/******/</span> 			exports: &#123;&#125;</div><div class="line"><span class="comment">/******/</span> 		&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Execute the module function</span></div><div class="line"><span class="comment">/******/</span> 		modules[moduleId].call(<span class="built_in">module</span>.exports, <span class="built_in">module</span>, <span class="built_in">module</span>.exports, __webpack_require__);</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Flag the module as loaded</span></div><div class="line"><span class="comment">/******/</span> 		<span class="built_in">module</span>.l = <span class="literal">true</span>;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 		<span class="comment">// Return the exports of the module</span></div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">return</span> <span class="built_in">module</span>.exports;</div><div class="line"><span class="comment">/******/</span> 	&#125;</div></pre></td></tr></table></figure><br>这段代码在立即执行函数的内部定义了<code>__webpack_require__</code>函数，通过名称我们可以了解到这个函数主要用来加载模块。可以看到，如果<code>installedModules</code>数组中已经存在了要加载的模块，那么就可以直接返回对应模块的输出变量；如果不存在，那就向<code>installedModules</code>中添加这个模块，并设置其标识<code>i</code>为其id，是否已被加载<code>l</code>为false，输出变量为空对象。之后通过<code>call</code>函数执行这个模块中的代码，即加载这个模块。在后面可以看到，模块中的代码被webpack封装在一个匿名函数中。在加载完成后，模块的是否被加载属性<code>l</code>被设置为true，最后这个函数将返回模块的输出变量。<br><figure class="highlight js"><figcaption><span>line 30-63</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span> 	<span class="comment">// expose the modules object (__webpack_modules__)</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.m = modules;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// expose the module cache</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.c = installedModules;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// identity function for calling harmony imports with the correct context</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.i = <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123; <span class="keyword">return</span> value; &#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// define getter function for harmony exports</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.d = <span class="function"><span class="keyword">function</span>(<span class="params">exports, name, getter</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">if</span>(!__webpack_require__.o(exports, name)) &#123;</div><div class="line"><span class="comment">/******/</span> 			<span class="built_in">Object</span>.defineProperty(exports, name, &#123;</div><div class="line"><span class="comment">/******/</span> 				configurable: <span class="literal">false</span>,</div><div class="line"><span class="comment">/******/</span> 				enumerable: <span class="literal">true</span>,</div><div class="line"><span class="comment">/******/</span> 				get: getter</div><div class="line"><span class="comment">/******/</span> 			&#125;);</div><div class="line"><span class="comment">/******/</span> 		&#125;</div><div class="line"><span class="comment">/******/</span> 	&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// getDefaultExport function for compatibility with non-harmony modules</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.n = <span class="function"><span class="keyword">function</span>(<span class="params">module</span>) </span>&#123;</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">var</span> getter = <span class="built_in">module</span> &amp;&amp; <span class="built_in">module</span>.__esModule ?</div><div class="line"><span class="comment">/******/</span> 			<span class="function"><span class="keyword">function</span> <span class="title">getDefault</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">module</span>[<span class="string">'default'</span>]; &#125; :</div><div class="line"><span class="comment">/******/</span> 			<span class="function"><span class="keyword">function</span> <span class="title">getModuleExports</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">module</span>; &#125;;</div><div class="line"><span class="comment">/******/</span> 		__webpack_require__.d(getter, <span class="string">'a'</span>, getter);</div><div class="line"><span class="comment">/******/</span> 		<span class="keyword">return</span> getter;</div><div class="line"><span class="comment">/******/</span> 	&#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// Object.prototype.hasOwnProperty.call</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.o = <span class="function"><span class="keyword">function</span>(<span class="params">object, property</span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">Object</span>.prototype.hasOwnProperty.call(object, property); &#125;;</div><div class="line"><span class="comment">/******/</span></div><div class="line"><span class="comment">/******/</span> 	<span class="comment">// __webpack_public_path__</span></div><div class="line"><span class="comment">/******/</span> 	__webpack_require__.p = <span class="string">""</span>;</div></pre></td></tr></table></figure><br>得益于JavaScript一切皆对象的概念和动态属性的特性，即使函数本身也可以被随意添加属性。在上面的代码中我们可以看到，webpack给<code>__webpack_require__</code>函数添加了一些属性，例如所有的模块<code>m</code>、已经被加载的模块<code>c</code>和一些与ES6模块相关的函数等等。webpack内部默认以CommonJs规范实现，所以遇到ES6模块需要做一些微调，这里便不再赘述。在加载模块时<code>__webpack_require__</code>函数会作为参数被传递到被加载的模块，从而将这些属性和函数暴露给模块内部。<br><figure class="highlight js"><figcaption><span>line 65-66</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span> 	<span class="comment">// Load entry module and return exports</span></div><div class="line"><span class="comment">/******/</span> 	<span class="keyword">return</span> __webpack_require__(__webpack_require__.s = <span class="number">1</span>);</div></pre></td></tr></table></figure><br>在匿名函数的最后，调用了<code>__webpack_require__</code>函数，将此函数也作为一个模块加载到modules中。<br><figure class="highlight js"><figcaption><span>line 69-81</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span> ([</div><div class="line"><span class="comment">/* 0 */</span></div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;</div><div class="line"><span class="meta">"use strict"</span>;</div><div class="line"><span class="keyword">var</span> user = &#123;</div><div class="line">    <span class="attr">username</span>: <span class="string">"FebV"</span>,</div><div class="line">    <span class="attr">password</span>: <span class="string">"mypass"</span></div><div class="line">&#125;</div><div class="line"><span class="comment">/* harmony default export */</span> __webpack_exports__[<span class="string">"a"</span>] = (user);</div><div class="line"><span class="comment">/***/</span> &#125;),</div></pre></td></tr></table></figure><br>在此处，我们编写的user.js被封装到一个匿名函数中，并作为入口匿名立即执行函数的参数传入。ES6模块语法规定在模块的内部自动使用严格模式。在模块代码执行完成之后<code>__webpack_exports__[&quot;a&quot;] = (user);</code>将模块的输出变量赋值给<code>__webpack_exports__</code>以供其他模块使用。<br><figure class="highlight js"><figcaption><span>line 83-92</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span> ([</div><div class="line"><span class="comment">/* 0 */</span></div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;</div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;</div><div class="line"><span class="meta">"use strict"</span>;</div><div class="line"><span class="built_in">Object</span>.defineProperty(__webpack_exports__, <span class="string">"__esModule"</span>, &#123; <span class="attr">value</span>: <span class="literal">true</span> &#125;);</div><div class="line"><span class="comment">/* harmony import */</span> <span class="keyword">var</span> __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(<span class="number">0</span>);</div><div class="line"><span class="built_in">console</span>.log(__WEBPACK_IMPORTED_MODULE_0__user__[<span class="string">"a"</span> <span class="comment">/* default */</span>].username);</div><div class="line"><span class="comment">/***/</span> &#125;)</div><div class="line"><span class="comment">/******/</span> ]);</div></pre></td></tr></table></figure><br>在webpack打包之后index.js模块也被封装到一个匿名函数中。在index.js中我们使用import引入了user.js模块，在打包后的模块代码中，首先声明其为esModule，方便在其他模块中识别此模块的模块规范。因为index.js模块依赖于user.js，所以调用<code>__webpack_require__</code>来加载user.js，然后就可以使用user.js中输出的变量了。</p>
+<h2 id="配置webpack"><a href="#配置webpack" class="headerlink" title="配置webpack"></a>配置webpack</h2><p>虽然webpack一开始被用来打包互相依赖的模块，但令webpack大放光芒的是它提供的丰富的功能，使用webpack可以极大提高前端开发的效率。</p>
+<h3 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h3><p>通过loader，webpack允许在打包前首先对JavaScript代码等静态资源进行处理，以babel为例。<br>JavaScript的ES6标准为JavaScript添加了一系列十分有用的函数和语法，能够让编写前端代码更加流畅优雅，但现阶段浏览器并不能够完全支持ES6标准的语法，如果既希望使用ES6的语法又希望能够在大部分浏览器上不会又兼容性问题，我们就需要使用babel将ES6代码转为ES5的标准。<br><code>npm install --save-dev babel-core babel-loader babel-preset-es2015</code><br><figure class="highlight plain"><figcaption><span>project/root/webpack.config.js</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">module.exports = &#123;</div><div class="line">    entry: &quot;./index.js&quot;,</div><div class="line">    output: &#123;</div><div class="line">        path: __dirname,</div><div class="line">        filename: &apos;bundle.js&apos;,</div><div class="line">    &#125;,</div><div class="line">    module: &#123;</div><div class="line">        loaders: [</div><div class="line">            &#123;</div><div class="line">                test: /\.js$/,</div><div class="line">                exclude: /node_modules/,</div><div class="line">                loader: &quot;babel-loader&quot;</div><div class="line">            &#125;</div><div class="line">        ],</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br><figure class="highlight plain"><figcaption><span>project/root/.babelrc</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;presets&quot;: [&quot;es2015&quot;]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/blog/tags/前端/" rel="tag"># 前端</a>
+          
+            <a href="/blog/tags/JavaScipt/" rel="tag"># JavaScipt</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/04/24/山东大学校园网自动重连（纯浏览器方案）/" rel="next" title="山东大学校园网自动重连（纯浏览器方案）">
+                <i class="fa fa-chevron-left"></i> 山东大学校园网自动重连（纯浏览器方案）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/blog/images/avatar.gif"
+               alt="FebV" />
+          <p class="site-author-name" itemprop="name">FebV</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/blog/archives">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模块化"><span class="nav-number">1.</span> <span class="nav-text">模块化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Tradition"><span class="nav-number">1.1.</span> <span class="nav-text">Tradition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AMD-CMD"><span class="nav-number">1.2.</span> <span class="nav-text">AMD/CMD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CommonJS"><span class="nav-number">1.3.</span> <span class="nav-text">CommonJS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES6"><span class="nav-number">1.4.</span> <span class="nav-text">ES6</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Webpack介绍"><span class="nav-number">2.</span> <span class="nav-text">Webpack介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装webpack"><span class="nav-number">2.1.</span> <span class="nav-text">安装webpack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初步使用webpack"><span class="nav-number">2.2.</span> <span class="nav-text">初步使用webpack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#webpack原理"><span class="nav-number">2.3.</span> <span class="nav-text">webpack原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置webpack"><span class="nav-number">2.4.</span> <span class="nav-text">配置webpack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#loader"><span class="nav-number">2.4.1.</span> <span class="nav-text">loader</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">FebV</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://febv.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://febv.github.io/blog/2017/04/22/模块化与webpack & webpack-dev-server/';
+          this.page.identifier = '2017/04/22/模块化与webpack & webpack-dev-server/';
+          this.page.title = '模块化与webpack & webpack-dev-server';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://febv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
